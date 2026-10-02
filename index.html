@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neeta's Food Store</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{--bg1:#2a0a2e;--bg2:#5c1236;--gold:#ffc84a;--saffron:#ff8a1f;--rose:#ff4f7b;--ink:#fff4e0;--card:rgba(255,255,255,.08);--line:rgba(255,200,74,.35);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a0a2e}}
+:root[data-theme="dark"]{--bg1:#2a0a2e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:radial-gradient(120% 90% at 20% 0%,var(--bg2),var(--bg1) 70%) fixed,#2a0a2e;overflow-x:hidden}
+h1,h2,h3{font-family:'Rozha One',Georgia,serif;font-weight:400}
+#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.p{position:absolute;bottom:-20px;border-radius:50%;background:radial-gradient(circle,#ffe29a,#ff8a1f 60%,transparent 70%);opacity:.7;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-110vh) translateX(var(--dx));opacity:0}}
+.scr{position:fixed;inset:0;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;overflow-y:auto;z-index:1}
+.scr.on{display:flex;animation:in .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:scale(.94) translateY(30px);filter:blur(8px)}}
+.center{justify-content:center;text-align:center}
+.glow{font-size:clamp(38px,11vw,84px);line-height:1.1;color:#fff;text-shadow:0 0 8px #fff,0 0 22px var(--gold),0 0 48px var(--saffron),0 0 90px var(--rose);animation:pulse 2.6s ease-in-out infinite}
+.glow small{display:block;font-size:.5em;margin-top:8px;color:var(--gold)}
+@keyframes pulse{50%{text-shadow:0 0 4px #fff,0 0 12px var(--gold),0 0 26px var(--saffron),0 0 50px var(--rose);transform:scale(.985)}}
+.tag{margin:18px 0 34px;color:#ffd9a0;font-weight:700;letter-spacing:.04em}
+.btn{position:relative;overflow:hidden;border:0;border-radius:99px;padding:16px 38px;font:800 18px 'Nunito',sans-serif;color:#3b0d1d;background:linear-gradient(90deg,var(--gold),var(--saffron),var(--gold));background-size:200% 100%;cursor:pointer;box-shadow:0 0 0 0 rgba(255,200,74,.7),0 10px 30px rgba(255,138,31,.45);animation:ring 2s infinite,slide 3s linear infinite;transition:transform .2s}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.45;animation:none;cursor:not-allowed}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:shine 2.8s infinite}
+@keyframes ring{70%{box-shadow:0 0 0 18px rgba(255,200,74,0),0 10px 30px rgba(255,138,31,.45)}}
+@keyframes slide{to{background-position:200% 0}}
+@keyframes shine{60%,100%{left:130%}}
+.top{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.top h2{font-size:26px;color:var(--gold);text-shadow:0 0 18px rgba(255,138,31,.7)}
+.cartb{position:relative;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:10px 18px;font:800 15px 'Nunito',sans-serif;cursor:pointer;backdrop-filter:blur(8px)}
+.badge{position:absolute;top:-8px;right:-4px;background:var(--rose);color:#fff;border-radius:99px;min-width:22px;height:22px;display:none;place-items:center;font-size:12px}
+.badge.show{display:grid;animation:pop .4s}
+@keyframes pop{50%{transform:scale(1.5)}}
+.item{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;text-align:center;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pic{width:min(70vw,250px);aspect-ratio:1;margin:6px auto 0;border:0;background:radial-gradient(circle,rgba(255,200,74,.35),transparent 65%);border-radius:50%;cursor:pointer;animation:float 3.6s ease-in-out infinite;transition:transform .3s}
+.pic:hover{transform:scale(1.08) rotate(-4deg)}
+.pic svg{width:100%;height:100%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
+@keyframes float{50%{translate:0 -14px}}
+.item h3{font-size:32px;margin-top:10px;color:var(--gold)}
+.price{font-weight:800;font-size:20px;margin:4px 0 10px}
+.hint{color:#ffd9a0;font-size:14px;animation:blink 1.8s infinite}
+@keyframes blink{50%{opacity:.4}}
+.modal{position:fixed;inset:0;z-index:5;background:rgba(20,0,20,.7);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.sheet{width:100%;max-width:520px;background:linear-gradient(160deg,#4a1240,#2a0a2e);border:1px solid var(--line);border-radius:28px 28px 0 0;padding:26px 22px calc(26px + env(safe-area-inset-bottom,0px));text-align:center;animation:up .45s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet svg{width:110px;height:110px}
+.step{display:flex;align-items:center;justify-content:center;gap:22px;margin:16px 0}
+.step button{width:52px;height:52px;border-radius:50%;border:1px solid var(--gold);background:var(--card);color:var(--gold);font-size:28px;cursor:pointer;transition:transform .15s}
+.step button:active{transform:scale(.85)}
+.step b{font:400 44px 'Rozha One',serif;min-width:60px;color:#fff;text-shadow:0 0 16px var(--gold)}
+.sub{margin-bottom:16px;color:#ffd9a0;font-weight:700}
+.close{background:none;border:0;color:#ffd9a0;margin-top:14px;font:700 14px 'Nunito',sans-serif;cursor:pointer}
+.panel{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;margin-bottom:14px;backdrop-filter:blur(10px)}
+.panel h3{font-size:20px;color:var(--gold);margin-bottom:10px}
+.line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0}
+.total{border-top:1px dashed var(--line);margin-top:8px;padding-top:12px;font-size:22px;font-weight:800}
+.total span:last-child{color:var(--gold);text-shadow:0 0 14px var(--saffron)}
+.row{display:flex;gap:10px}
+input{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;font:700 16px 'Nunito',sans-serif;outline:0;transition:box-shadow .2s}
+input:focus{box-shadow:0 0 0 3px var(--saffron)}
+input::placeholder{color:#c9a7b0}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pay label{cursor:pointer}
+.pay input{display:none}
+.pay span{display:block;text-align:center;padding:14px 6px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);font-weight:800;transition:.25s}
+.pay input:checked+span{background:linear-gradient(135deg,var(--gold),var(--saffron));color:#3b0d1d;transform:scale(1.04);box-shadow:0 0 22px rgba(255,138,31,.7)}
+.back{background:none;border:0;color:#ffd9a0;font:800 15px 'Nunito',sans-serif;cursor:pointer}
+.empty{text-align:center;padding:20px;color:#ffd9a0}
+.ok{width:170px;height:170px}
+.ok circle{fill:none;stroke:var(--gold);stroke-width:5;stroke-dasharray:340;stroke-dashoffset:340;animation:draw .9s .1s forwards;filter:drop-shadow(0 0 10px var(--saffron))}
+.ok path{fill:none;stroke:#fff;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:90;stroke-dashoffset:90;animation:draw .6s .95s forwards;filter:drop-shadow(0 0 8px var(--gold))}
+.ok .fill{fill:rgba(255,200,74,.18);stroke:none;opacity:0;animation:fadein .5s .8s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadein{to{opacity:1}}
+.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:6;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.oid{margin-top:14px;font-weight:800;color:var(--gold)}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<div id="fx"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<radialGradient id="mg" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#fff7dc"/><stop offset=".55" stop-color="#ffd98a"/><stop offset="1" stop-color="#e59a2e"/></radialGradient>
+<symbol id="modak" viewBox="0 0 120 120">
+<path d="M60 6c7 14 3 22 0 28 36 5 50 36 38 58-9 16-67 16-76 0-12-22 2-53 38-58-3-6-7-14 0-28z" fill="url(#mg)"/>
+<path d="M60 34c-14 18-16 44-8 64M60 34c-4 20-4 44 0 64M60 34c14 18 16 44 8 64M60 34c-24 10-34 34-28 56M60 34c24 10 34 34 28 56" fill="none" stroke="#c9781a" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+<ellipse cx="44" cy="52" rx="9" ry="16" fill="#fff" opacity=".45" transform="rotate(20 44 52)"/>
+</symbol></defs></svg>
+
+<!-- Welcome -->
+<section class="scr center on" id="welcome">
+  <h1 class="glow">Welcome to<small>Neeta's Food Store</small></h1>
+  <p class="tag">Fresh, homemade sweets, delivered to your door</p>
+  <button class="btn" id="go">Continue</button>
+</section>
+
+<!-- Shop -->
+<section class="scr" id="shop">
+  <div class="top"><h2>Our menu</h2><button class="cartb" id="cartBtn">Cart <span class="badge" id="badge">0</span></button></div>
+  <div class="item">
+    <button class="pic" id="pic" aria-label="Choose quantity of Modak"><svg viewBox="0 0 120 120"><use href="#modak"/></svg></button>
+    <h3>Modak</h3>
+    <p class="price">₹25 per piece</p>
+    <p class="hint">Tap the modak to choose quantity</p>
+  </div>
+</section>
+
+<!-- Cart -->
+<section class="scr" id="cart">
+  <div class="top"><button class="back" id="back">‹ Menu</button><h2>Your cart</h2></div>
+  <div class="panel" id="lines"></div>
+  <div class="panel" id="details">
+    <h3>Delivery address</h3>
+    <div class="row"><input id="flat" placeholder="Flat number" inputmode="numeric" autocomplete="off"><input id="wing" placeholder="Bldg wing" autocomplete="off"></div>
+  </div>
+  <div class="panel" id="paywrap">
+    <h3>Pay with</h3>
+    <div class="pay">
+      <label><input type="radio" name="app" value="gpay" checked><span>Google Pay</span></label>
+      <label><input type="radio" name="app" value="phonepe"><span>PhonePe</span></label>
+      <label><input type="radio" name="app" value="paytm"><span>Paytm</span></label>
+      <label><input type="radio" name="app" value="upi"><span>Other UPI app</span></label>
+    </div>
+  </div>
+  <button class="btn" id="payBtn" disabled>Pay</button>
+</section>
+
+<!-- Confirm after returning from the UPI app -->
+<section class="scr center" id="confirm">
+  <div class="panel" style="text-align:center">
+    <h3>Finished paying?</h3>
+    <p class="sub">Once your UPI app shows the payment as successful, tap below.</p>
+    <button class="btn" id="paid">I've paid</button><br>
+    <button class="close" id="retry">Open the payment app again</button>
+  </div>
+</section>
+
+<!-- Success -->
+<section class="scr center" id="done">
+  <svg class="ok" viewBox="0 0 120 120"><circle class="fill" cx="60" cy="60" r="54" style="fill:rgba(255,200,74,.18)"/><circle cx="60" cy="60" r="54"/><path d="M36 62l16 16 32-34"/></svg>
+  <h1 class="glow" style="font-size:clamp(32px,9vw,60px);margin-top:18px">Congratulations!</h1>
+  <p class="tag" style="margin-bottom:10px;font-size:20px">Your order is placed!</p>
+  <p id="sum" style="color:#ffd9a0;font-weight:700"></p>
+  <p class="oid" id="oid"></p>
+</section>
+
+<!-- Quantity sheet -->
+<div class="modal" id="qm">
+  <div class="sheet">
+    <svg viewBox="0 0 120 120"><use href="#modak"/></svg>
+    <h3 style="font-size:28px;color:var(--gold)">Modak</h3>
+    <p class="sub">₹25 per piece</p>
+    <div class="step"><button id="minus" aria-label="Less">−</button><b id="q">1</b><button id="plus" aria-label="More">+</button></div>
+    <p class="sub" id="qt">Total ₹25</p>
+    <button class="btn" id="add">Add to cart</button><br>
+    <button class="close" id="cancel">Cancel</button>
+  </div>
+</div>
+
+<script>
+const UPI="sarthakk760@okhdfcbank",NAME="Neeta's Food Store",PRICE=25;
+let cart=0,q=1,cur="welcome";
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0}
+// floating embers
+const fx=$('fx');
+for(let i=0;i<26;i++){const p=document.createElement('i');p.className='p';const s=4+Math.random()*10;
+p.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;--dx:${(Math.random()-.5)*120}px;animation-duration:${7+Math.random()*9}s;animation-delay:${-Math.random()*12}s`;fx.appendChild(p)}
+$('go').onclick=()=>show('shop');
+$('pic').onclick=()=>{q=1;upd();$('qm').classList.add('on')};
+function upd(){$('q').textContent=q;$('qt').textContent='Total ₹'+q*PRICE}
+$('plus').onclick=()=>{q=Math.min(q+1,100);upd()};
+$('minus').onclick=()=>{q=Math.max(q-1,1);upd()};
+$('cancel').onclick=()=>$('qm').classList.remove('on');
+$('add').onclick=()=>{cart+=q;$('qm').classList.remove('on');badge();show('cart');render()};
+function badge(){const b=$('badge');b.textContent=cart;b.classList.remove('show');if(cart){void b.offsetWidth;b.classList.add('show')}}
+$('cartBtn').onclick=()=>{show('cart');render()};
+$('back').onclick=()=>show('shop');
+function render(){
+  const L=$('lines');
+  if(!cart){L.innerHTML='<div class="empty">Your cart is empty. Tap the modak on the menu to add some.</div>';check();return}
+  L.innerHTML=`<h3>Order</h3><div class="line"><span>Modak × ${cart}</span><span>₹${cart*PRICE}</span></div>
+  <div class="line"><span class="step" style="margin:0;gap:14px;justify-content:flex-start"><button style="width:38px;height:38px;font-size:22px" id="cm">−</button><button style="width:38px;height:38px;font-size:22px" id="cp">+</button></span><span></span></div>
+  <div class="line total"><span>Total</span><span>₹${cart*PRICE}</span></div>`;
+  $('cm').onclick=()=>{cart=Math.max(cart-1,0);badge();render()};
+  $('cp').onclick=()=>{cart++;badge();render()};
+  check();
+}
+function check(){$('payBtn').disabled=!(cart&&$('flat').value.trim()&&$('wing').value.trim())}
+$('flat').oninput=$('wing').oninput=check;
+function upiLink(){
+  const app=document.querySelector('input[name=app]:checked').value;
+  const base={gpay:'tez://upi/pay?',phonepe:'phonepe://pay?',paytm:'paytmmp://pay?',upi:'upi://pay?'}[app];
+  const note=`Modak x${cart} | Flat ${$('flat').value.trim()} ${$('wing').value.trim()}`;
+  return base+`pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${(cart*PRICE).toFixed(2)}&cu=INR&tn=${encodeURIComponent(note)}`;
+}
+function openApp(){location.href=upiLink()}
+$('payBtn').onclick=()=>{openApp();setTimeout(()=>show('confirm'),600)};
+$('retry').onclick=openApp;
+$('paid').onclick=()=>{
+  const id='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();
+  $('sum').textContent=`Modak × ${cart} · ₹${cart*PRICE} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
+  $('oid').textContent='Order ID: '+id;
+  show('done');confetti();
+};
+function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
+  for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
+  e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
+  document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
+</script>
+</body>
+</html>
