@@ -87,6 +87,18 @@ input::placeholder{color:#c9a7b0}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 .oid{margin-top:14px;font-weight:800;color:var(--gold)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+
+.grid{width:100%;max-width:520px;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-bottom:24px}
+.card{max-width:none;padding:14px;border-radius:22px;animation:in .6s both;animation-delay:calc(var(--i)*70ms)}
+.gpic{width:100%;aspect-ratio:1;padding:0;border:0;border-radius:50%;background:radial-gradient(circle,rgba(255,200,74,.3),transparent 65%);cursor:pointer;display:grid;place-items:center;animation:float 3.6s ease-in-out infinite;animation-delay:calc(var(--i)*-.45s);transition:transform .3s}
+.gpic:hover{transform:scale(1.08) rotate(-4deg)}
+.gpic .mimg,.gpic svg{width:100%;height:100%}
+.gpic svg{filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
+.em{font-size:64px;line-height:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
+.card h3{font-size:19px;margin-top:8px}
+.card .price{font-size:17px;margin:2px 0 0}
+.card small{display:block;font-size:12px;color:#ffd9a0;font-weight:700}
+.sheet .em{font-size:80px}
 </style>
 </head>
 <body>
@@ -110,12 +122,8 @@ input::placeholder{color:#c9a7b0}
 <!-- Shop -->
 <section class="scr" id="shop">
   <div class="top"><h2>Our menu</h2><button class="cartb" id="cartBtn">Cart <span class="badge" id="badge">0</span></button></div>
-  <div class="item">
-    <button class="pic" id="pic" aria-label="Choose quantity of Modak"><img class="mimg" src="modak.jpg" alt="Modak" onerror="fallback(this)"></button>
-    <h3>Modak</h3>
-    <p class="price">₹25 per piece</p>
-    <p class="hint">Tap the modak to choose quantity</p>
-  </div>
+  <p class="hint" style="margin-bottom:14px">Tap a food to choose quantity</p>
+  <div class="grid" id="grid"></div>
 </section>
 
 <!-- Cart -->
@@ -158,9 +166,9 @@ input::placeholder{color:#c9a7b0}
 <!-- Quantity sheet -->
 <div class="modal" id="qm">
   <div class="sheet">
-    <img class="mimg" src="modak.jpg" alt="Modak" onerror="fallback(this)">
-    <h3 style="font-size:28px;color:var(--gold)">Modak</h3>
-    <p class="sub">₹25 per piece</p>
+    <div id="sheetPic"></div>
+    <h3 id="sheetName" style="font-size:28px;color:var(--gold)"></h3>
+    <p class="sub" id="sheetUnit"></p>
     <div class="step"><button id="minus" aria-label="Less">−</button><b id="q">1</b><button id="plus" aria-label="More">+</button></div>
     <p class="sub" id="qt">Total ₹25</p>
     <button class="btn" id="add">Add to cart</button><br>
@@ -170,65 +178,79 @@ input::placeholder{color:#c9a7b0}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-function fallback(i){const n='http://www.w3.org/2000/svg',v=document.createElementNS(n,'svg'),u=document.createElementNS(n,'use');v.setAttribute('viewBox','0 0 120 120');u.setAttribute('href','#modak');v.appendChild(u);i.replaceWith(v)}
-const UPI="sarthakk760@okhdfcbank",NAME="Neeta's Food Store",PRICE=25;
-let cart=0,q=1,cur="welcome";
+const NAME="Neeta's Food Store",UPI="sarthakk760@okhdfcbank",WA="918291697606";
+const ITEMS=[
+{id:'modak',n:'Modak',p:25,u:'per piece',e:'🍡',img:'modak.jpg'},
+{id:'puran',n:'Puran Poli',p:70,u:'per piece',e:'🥞',img:'puran-poli.jpg'},
+{id:'jwari',n:'Jwari Roti',p:50,u:'per piece',e:'🥙',img:'jwari-roti.jpg'},
+{id:'thali',n:'Thali Plate',p:200,u:'per plate',e:'🍛',img:'thali.jpg'},
+{id:'pizza',n:'Pizza',p:100,u:'each',e:'🍕',img:'pizza.jpg'},
+{id:'pasta',n:'Pasta',p:80,u:'each',e:'🍝',img:'pasta.jpg'},
+{id:'burger',n:'Burger',p:80,u:'each',e:'🍔',img:'burger.jpg'},
+{id:'cmaggi',n:'Cheese Maggi',p:70,u:'each',e:'🍜',img:'cheese-maggi.jpg'},
+{id:'smaggi',n:'Spicy Maggi',p:70,u:'each',e:'🌶️',img:'spicy-maggi.jpg'},
+{id:'scmaggi',n:'Spicy Cheese Maggi',p:100,u:'each',e:'🧀',img:'spicy-cheese-maggi.jpg'}];
 const $=id=>document.getElementById(id);
-function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0}
+const cart={};let cur="welcome",sel=null,q=1,oid="",waOpened=false,lastQR="";
+const count=()=>Object.values(cart).reduce((a,b)=>a+b,0);
+const total=()=>ITEMS.reduce((a,i)=>a+(cart[i.id]||0)*i.p,0);
+const pic=i=>`<img class="mimg" data-id="${i.id}" src="${i.img}" alt="${i.n}">`;
+// photo missing -> drawn modak / emoji fallback
+document.addEventListener('error',e=>{const el=e.target;if(el.tagName!=='IMG'||!el.dataset.id)return;
+  const i=ITEMS.find(x=>x.id===el.dataset.id);
+  if(i.id==='modak'){const n='http://www.w3.org/2000/svg',v=document.createElementNS(n,'svg'),u=document.createElementNS(n,'use');v.setAttribute('viewBox','0 0 120 120');u.setAttribute('href','#modak');v.appendChild(u);el.replaceWith(v)}
+  else{const sp=document.createElement('span');sp.className='em';sp.textContent=i.e;el.replaceWith(sp)}},true);
+function show(id){document.querySelectorAll('.scr').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0}
 // floating embers
 const fx=$('fx');
-for(let i=0;i<26;i++){const p=document.createElement('i');p.className='p';const s=4+Math.random()*10;
-p.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;--dx:${(Math.random()-.5)*120}px;animation-duration:${7+Math.random()*9}s;animation-delay:${-Math.random()*12}s`;fx.appendChild(p)}
+for(let i=0;i<26;i++){const p=document.createElement('i');p.className='p';const z=4+Math.random()*10;
+p.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;--dx:${(Math.random()-.5)*120}px;animation-duration:${7+Math.random()*9}s;animation-delay:${-Math.random()*12}s`;fx.appendChild(p)}
 $('go').onclick=()=>show('shop');
-$('pic').onclick=()=>{q=1;upd();$('qm').classList.add('on')};
-function upd(){$('q').textContent=q;$('qt').textContent='Total ₹'+q*PRICE}
+// menu
+$('grid').innerHTML=ITEMS.map((i,k)=>`<div class="item card" style="--i:${k}"><button class="gpic" data-id="${i.id}" aria-label="${i.n}">${pic(i)}</button><h3>${i.n}</h3><p class="price">₹${i.p}<small>${i.u}</small></p></div>`).join('');
+$('grid').onclick=e=>{const b=e.target.closest('.gpic');if(!b)return;sel=ITEMS.find(x=>x.id===b.dataset.id);q=1;
+  $('sheetPic').innerHTML=pic(sel);$('sheetName').textContent=sel.n;$('sheetUnit').textContent=`₹${sel.p} ${sel.u}`;upd();$('qm').classList.add('on')};
+function upd(){$('q').textContent=q;$('qt').textContent='Total ₹'+q*sel.p}
 $('plus').onclick=()=>{q=Math.min(q+1,100);upd()};
 $('minus').onclick=()=>{q=Math.max(q-1,1);upd()};
 $('cancel').onclick=()=>$('qm').classList.remove('on');
-$('add').onclick=()=>{cart+=q;$('qm').classList.remove('on');badge();show('cart');render()};
-function badge(){const b=$('badge');b.textContent=cart;b.classList.remove('show');if(cart){void b.offsetWidth;b.classList.add('show')}}
+$('add').onclick=()=>{cart[sel.id]=Math.min((cart[sel.id]||0)+q,100);$('qm').classList.remove('on');badge();show('cart');render()};
+function badge(){const b=$('badge');b.textContent=count();b.classList.remove('show');if(count()){void b.offsetWidth;b.classList.add('show')}}
 $('cartBtn').onclick=()=>{show('cart');render()};
 $('back').onclick=()=>show('shop');
+// cart
 function render(){
-  const L=$('lines');
-  if(!cart){L.innerHTML='<div class="empty">Your cart is empty. Tap the modak on the menu to add some.</div>';check();return}
-  L.innerHTML=`<h3>Order</h3><div class="line"><span>Modak × ${cart}</span><span>₹${cart*PRICE}</span></div>
-  <div class="line"><span class="step" style="margin:0;gap:14px;justify-content:flex-start"><button style="width:38px;height:38px;font-size:22px" id="cm">−</button><button style="width:38px;height:38px;font-size:22px" id="cp">+</button></span><span></span></div>
-  <div class="line total"><span>Total</span><span>₹${cart*PRICE}</span></div>`;
-  $('cm').onclick=()=>{cart=Math.max(cart-1,0);badge();render()};
-  $('cp').onclick=()=>{cart++;badge();render()};
+  const L=$('lines'),ids=ITEMS.filter(i=>cart[i.id]);
+  if(!ids.length){L.innerHTML='<div class="empty">Your cart is empty. Tap a food on the menu to add it.</div>';check();return}
+  L.innerHTML='<h3>Order</h3>'+ids.map(i=>`<div class="line"><span>${i.n} × ${cart[i.id]}</span><span>₹${cart[i.id]*i.p}</span></div><div class="line"><span class="step" style="margin:0 0 6px;gap:14px;justify-content:flex-start"><button style="width:38px;height:38px;font-size:22px" data-a="-" data-id="${i.id}">−</button><button style="width:38px;height:38px;font-size:22px" data-a="+" data-id="${i.id}">+</button></span><span></span></div>`).join('')+`<div class="line total"><span>Total</span><span>₹${total()}</span></div>`;
   check();
 }
-function check(){const ok=cart&&$('flat').value.trim()&&$('wing').value.trim();$('paidManual').disabled=!ok;$('amt').textContent=cart*PRICE;drawQR()}
-let lastQR='';
-function drawQR(){const t=`upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${(cart*PRICE).toFixed(2)}&cu=INR`;if(!cart||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
+$('lines').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b)return;const id=b.dataset.id;
+  cart[id]=Math.max((cart[id]||0)+(b.dataset.a==='+'?1:-1),0);if(!cart[id])delete cart[id];badge();render()};
+function check(){const ok=count()&&$('flat').value.trim()&&$('wing').value.trim();$('paidManual').disabled=!ok;$('amt').textContent=total();drawQR()}
+function drawQR(){const t=`upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${total().toFixed(2)}&cu=INR`;
+  if(!count()||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
+$('flat').oninput=$('wing').oninput=check;
 $('uid').textContent=UPI;
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(UPI)}catch(e){const a=document.createElement('textarea');a.value=UPI;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy',1800)};
-$('flat').oninput=$('wing').oninput=check;
-const WA="918291697606";
-let oid="",waOpened=false;
+// WhatsApp + success
 function waLink(){
-    const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\nProduct: Modak\nPrice: ₹${PRICE} per piece\nQuantity: ${cart}\n*Total: ₹${cart*PRICE}*\nPaid via: UPI\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
+  const lines=ITEMS.filter(i=>cart[i.id]).map(i=>`• ${i.n} × ${cart[i.id]} (₹${i.p} each) = ₹${cart[i.id]*i.p}`).join('\n');
+  const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\n${lines}\n\n*Total: ₹${total()}*\nPaid via: UPI\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
 function openWA(){waOpened=true;location.href=waLink()}
 function finish(){
   waOpened=false;
-  $('sum').textContent=`Modak × ${cart} · ₹${cart*PRICE} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
+  $('sum').textContent=ITEMS.filter(i=>cart[i.id]).map(i=>`${i.n} × ${cart[i.id]}`).join(', ')+` · ₹${total()} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
   $('oid').textContent='Order ID: '+oid;
   show('done');confetti();
 }
-function doPaid(){
-  oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();
-  show('wa');openWA();
-}
+function doPaid(){oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();show('wa');openWA()}
 $('paidManual').onclick=doPaid;
 $('reopen').onclick=openWA;
 $('sent').onclick=finish;
-// coming back from WhatsApp shows the tick automatically
-document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='visible'&&waOpened&&cur==='wa')finish();
-});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&waOpened&&cur==='wa')finish()});
 function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
   for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
