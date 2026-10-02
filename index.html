@@ -126,34 +126,13 @@ input::placeholder{color:#c9a7b0}
     <h3>Delivery address</h3>
     <div class="row"><input id="flat" placeholder="Flat number" inputmode="numeric" autocomplete="off"><input id="wing" placeholder="Bldg wing" autocomplete="off"></div>
   </div>
-  <div class="panel" id="paywrap">
-    <h3>Pay with</h3>
-    <div class="pay">
-      <label><input type="radio" name="app" value="gpay" checked><span>Google Pay</span></label>
-      <label><input type="radio" name="app" value="phonepe"><span>PhonePe</span></label>
-      <label><input type="radio" name="app" value="paytm"><span>Paytm</span></label>
-      <label><input type="radio" name="app" value="upi"><span>Other UPI app</span></label>
-    </div>
-  </div>
   <div class="panel" id="manual">
-    <h3>App shows an error? Pay manually</h3>
+    <h3>Pay by UPI</h3>
     <p class="sub" style="margin-bottom:8px">Send ₹<span id="amt">0</span> to this UPI ID from any UPI app:</p>
     <div class="line"><b id="uid" style="font-size:16px;word-break:break-all"></b><button class="cartb" id="copy">Copy</button></div>
     <div id="qr" style="background:#fff;padding:10px;border-radius:14px;width:fit-content;margin:12px auto"></div>
     <p class="sub" style="font-size:13px;text-align:center">Or scan this QR from another phone</p>
     <button class="btn" id="paidManual" disabled style="width:100%">I've paid, send my order</button>
-  </div>
-  <p class="sub" style="text-align:center;font-size:14px;margin:0 0 10px">In your UPI app, enter ₹<span id="amt2">0</span> and pay</p>
-  <button class="btn" id="payBtn" disabled>Pay</button>
-</section>
-
-<!-- Confirm after returning from the UPI app -->
-<section class="scr center" id="confirm">
-  <div class="panel" style="text-align:center">
-    <h3>Finished paying?</h3>
-    <p class="sub">Enter <b style="color:var(--gold)">₹<span id="cAmt">0</span></b> in your UPI app and pay. When it shows successful, tap below.</p>
-    <button class="btn" id="paid">I've paid</button><br>
-    <button class="close" id="retry">Open the payment app again</button>
   </div>
 </section>
 
@@ -220,25 +199,16 @@ function render(){
   $('cp').onclick=()=>{cart++;badge();render()};
   check();
 }
-function check(){const ok=cart&&$('flat').value.trim()&&$('wing').value.trim();$('payBtn').disabled=!ok;$('paidManual').disabled=!ok;$('amt').textContent=cart*PRICE;$('amt2').textContent=cart*PRICE;$('cAmt').textContent=cart*PRICE;drawQR()}
+function check(){const ok=cart&&$('flat').value.trim()&&$('wing').value.trim();$('paidManual').disabled=!ok;$('amt').textContent=cart*PRICE;drawQR()}
 let lastQR='';
 function drawQR(){const t=`upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${(cart*PRICE).toFixed(2)}&cu=INR`;if(!cart||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
 $('uid').textContent=UPI;
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(UPI)}catch(e){const a=document.createElement('textarea');a.value=UPI;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy',1800)};
 $('flat').oninput=$('wing').oninput=check;
-function upiLink(){
-  const app=document.querySelector('input[name=app]:checked').value;
-  const base={gpay:'tez://upi/pay?',phonepe:'phonepe://pay?',paytm:'paytmmp://pay?',upi:'upi://pay?'}[app];
-  return base+`pa=${UPI}&pn=${encodeURIComponent(NAME)}`;
-}
-function openApp(){location.href=upiLink()}
-$('payBtn').onclick=()=>{openApp();setTimeout(()=>show('confirm'),600)};
-$('retry').onclick=openApp;
 const WA="918291697606";
 let oid="",waOpened=false;
 function waLink(){
-  const pay={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[document.querySelector('input[name=app]:checked').value];
-  const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\nProduct: Modak\nPrice: ₹${PRICE} per piece\nQuantity: ${cart}\n*Total: ₹${cart*PRICE}*\nPaid via: ${pay}\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
+    const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\nProduct: Modak\nPrice: ₹${PRICE} per piece\nQuantity: ${cart}\n*Total: ₹${cart*PRICE}*\nPaid via: UPI\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
   return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
 }
 function openWA(){waOpened=true;location.href=waLink()}
@@ -252,7 +222,6 @@ function doPaid(){
   oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();
   show('wa');openWA();
 }
-$('paid').onclick=doPaid;
 $('paidManual').onclick=doPaid;
 $('reopen').onclick=openWA;
 $('sent').onclick=finish;
