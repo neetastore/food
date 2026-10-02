@@ -42,7 +42,9 @@ h1,h2,h3{font-family:'Rozha One',Georgia,serif;font-weight:400}
 .item{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;text-align:center;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .pic{width:min(70vw,250px);aspect-ratio:1;margin:6px auto 0;border:0;background:radial-gradient(circle,rgba(255,200,74,.35),transparent 65%);border-radius:50%;cursor:pointer;animation:float 3.6s ease-in-out infinite;transition:transform .3s}
 .pic:hover{transform:scale(1.08) rotate(-4deg)}
-.pic svg{width:100%;height:100%;filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
+.mimg{object-fit:cover;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 30px rgba(255,138,31,.6),0 14px 24px rgba(0,0,0,.5)}
+.pic .mimg,.pic svg{width:100%;height:100%}
+.pic svg{filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
 @keyframes float{50%{translate:0 -14px}}
 .item h3{font-size:32px;margin-top:10px;color:var(--gold)}
 .price{font-weight:800;font-size:20px;margin:4px 0 10px}
@@ -52,7 +54,7 @@ h1,h2,h3{font-family:'Rozha One',Georgia,serif;font-weight:400}
 .modal.on{display:flex}
 .sheet{width:100%;max-width:520px;background:linear-gradient(160deg,#4a1240,#2a0a2e);border:1px solid var(--line);border-radius:28px 28px 0 0;padding:26px 22px calc(26px + env(safe-area-inset-bottom,0px));text-align:center;animation:up .45s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes up{from{transform:translateY(100%)}}
-.sheet svg{width:110px;height:110px}
+.sheet svg,.sheet .mimg{width:110px;height:110px}
 .step{display:flex;align-items:center;justify-content:center;gap:22px;margin:16px 0}
 .step button{width:52px;height:52px;border-radius:50%;border:1px solid var(--gold);background:var(--card);color:var(--gold);font-size:28px;cursor:pointer;transition:transform .15s}
 .step button:active{transform:scale(.85)}
@@ -109,7 +111,7 @@ input::placeholder{color:#c9a7b0}
 <section class="scr" id="shop">
   <div class="top"><h2>Our menu</h2><button class="cartb" id="cartBtn">Cart <span class="badge" id="badge">0</span></button></div>
   <div class="item">
-    <button class="pic" id="pic" aria-label="Choose quantity of Modak"><svg viewBox="0 0 120 120"><use href="#modak"/></svg></button>
+    <button class="pic" id="pic" aria-label="Choose quantity of Modak"><img class="mimg" src="modak.jpg" alt="Modak" onerror="fallback(this)"></button>
     <h3>Modak</h3>
     <p class="price">₹25 per piece</p>
     <p class="hint">Tap the modak to choose quantity</p>
@@ -146,6 +148,16 @@ input::placeholder{color:#c9a7b0}
   </div>
 </section>
 
+<!-- WhatsApp step -->
+<section class="scr center" id="wa">
+  <div class="panel" style="text-align:center">
+    <h3>Send your order on WhatsApp</h3>
+    <p class="sub">Your order details are filled in. Tap Send in WhatsApp, then come back here.</p>
+    <button class="btn" id="sent">I've sent the message</button><br>
+    <button class="close" id="reopen">Open WhatsApp again</button>
+  </div>
+</section>
+
 <!-- Success -->
 <section class="scr center" id="done">
   <svg class="ok" viewBox="0 0 120 120"><circle class="fill" cx="60" cy="60" r="54" style="fill:rgba(255,200,74,.18)"/><circle cx="60" cy="60" r="54"/><path d="M36 62l16 16 32-34"/></svg>
@@ -158,7 +170,7 @@ input::placeholder{color:#c9a7b0}
 <!-- Quantity sheet -->
 <div class="modal" id="qm">
   <div class="sheet">
-    <svg viewBox="0 0 120 120"><use href="#modak"/></svg>
+    <img class="mimg" src="modak.jpg" alt="Modak" onerror="fallback(this)">
     <h3 style="font-size:28px;color:var(--gold)">Modak</h3>
     <p class="sub">₹25 per piece</p>
     <div class="step"><button id="minus" aria-label="Less">−</button><b id="q">1</b><button id="plus" aria-label="More">+</button></div>
@@ -169,6 +181,7 @@ input::placeholder{color:#c9a7b0}
 </div>
 
 <script>
+function fallback(i){const n='http://www.w3.org/2000/svg',v=document.createElementNS(n,'svg'),u=document.createElementNS(n,'use');v.setAttribute('viewBox','0 0 120 120');u.setAttribute('href','#modak');v.appendChild(u);i.replaceWith(v)}
 const UPI="sarthakk760@okhdfcbank",NAME="Neeta's Food Store",PRICE=25;
 let cart=0,q=1,cur="welcome";
 const $=id=>document.getElementById(id);
@@ -208,12 +221,30 @@ function upiLink(){
 function openApp(){location.href=upiLink()}
 $('payBtn').onclick=()=>{openApp();setTimeout(()=>show('confirm'),600)};
 $('retry').onclick=openApp;
-$('paid').onclick=()=>{
-  const id='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();
+const WA="918291697606";
+let oid="",waOpened=false;
+function waLink(){
+  const pay={gpay:'Google Pay',phonepe:'PhonePe',paytm:'Paytm',upi:'UPI'}[document.querySelector('input[name=app]:checked').value];
+  const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\nProduct: Modak\nPrice: ₹${PRICE} per piece\nQuantity: ${cart}\n*Total: ₹${cart*PRICE}*\nPaid via: ${pay}\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
+  return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
+}
+function openWA(){waOpened=true;location.href=waLink()}
+function finish(){
+  waOpened=false;
   $('sum').textContent=`Modak × ${cart} · ₹${cart*PRICE} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
-  $('oid').textContent='Order ID: '+id;
+  $('oid').textContent='Order ID: '+oid;
   show('done');confetti();
+}
+$('paid').onclick=()=>{
+  oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();
+  show('wa');openWA();
 };
+$('reopen').onclick=openWA;
+$('sent').onclick=finish;
+// coming back from WhatsApp shows the tick automatically
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='visible'&&waOpened&&cur==='wa')finish();
+});
 function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
   for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
