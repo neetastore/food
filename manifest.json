@@ -1,0 +1,10 @@
+{
+  "name": "Neeta's Food Store",
+  "short_name": "Neeta's Food",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#2a0a2e",
+  "theme_color": "#5c1236",
+  "orientation": "portrait",
+  "description": "Fresh, homemade sweets delivered to your door."
+}
