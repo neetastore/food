@@ -258,5 +258,14 @@ function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
   document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
 </script>
+  <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Service Worker registered'))
+      .catch(err => console.error('Service Worker registration failed:', err));
+  });
+}
+</script>
 </body>
 </html>
