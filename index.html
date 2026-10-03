@@ -215,8 +215,7 @@ function badge(){const n=count(),b=$('badge');b.textContent=n;b.classList.toggle
   $('cbar').classList.toggle('on',n>0&&cur==='shop');$('cbarT').textContent=`${n} item${n>1?'s':''} · ₹${total()}`}
 // shop
 $('chips').innerHTML=CATS.map(c=>`<button class="chip${c==='All'?' on':''}" data-c="${c}">${c}</button>`).join('');
-$('chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));renderGrid()};
-$('q').oninput=e=>{term=e.target.value.trim().toLowerCase();renderGrid()};
+$('chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));renderGrid()};$('q').oninput=e=>{term=e.target.value.trim().toLowerCase();renderGrid()};
 const ctl=i=>cart[i.id]?`<div class="stp"><button data-a="-" data-id="${i.id}">−</button><span>${cart[i.id]}</span><button data-a="+" data-id="${i.id}">+</button></div>`:`<button class="add" data-a="+" data-id="${i.id}">ADD</button>`;
 function renderGrid(){const L=ITEMS.filter(i=>(cat==='All'||i.c===cat)&&i.n.toLowerCase().includes(term));
   $('grid').innerHTML=L.length?L.map((i,k)=>`<div class="card" style="animation-delay:${k*50}ms"><div class="im">${pic(i)}</div><div class="nm">${i.n}</div><div class="un">${i.u}</div><div class="pr"><b>₹${i.p}</b>${ctl(i)}</div></div>`).join(''):'<p class="empty">No items found</p>'}
@@ -224,27 +223,22 @@ function chg(id,d){cart[id]=Math.min(Math.max((cart[id]||0)+d,0),100);if(!cart[i
   try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}renderGrid();badge();if(cur==='cart')render()}
 document.addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(b)chg(b.dataset.id,b.dataset.a==='+'?1:-1)});
 // navigation
-$('go').onclick=()=>show('shop');
-$('tabMenu').onclick=()=>show('shop');
+$('go').onclick=()=>show('shop');$('tabMenu').onclick=()=>show('shop');
 $('cartBtn').onclick=$('cbar').onclick=()=>{show('cart');render()};
-$('back').onclick=()=>show('shop');
-$('tabHelp').onclick=()=>{location.href=`https://wa.me/${WA}?text=${encodeURIComponent('Hi, I need help with my order')}`};
+$('back').onclick=()=>show('shop');$('tabHelp').onclick=()=>{location.href=`https://wa.me/${WA}?text=${encodeURIComponent('Hi, I need help with my order')}`};
 // cart
 function render(){
   const ids=ITEMS.filter(i=>cart[i.id]),has=ids.length>0;
-  $('payzone').style.display=has?'':'none';$('bill').style.display=has?'':'none';
-  $('lines').innerHTML=has?ids.map(i=>`<div class="ln"><div class="sm">${pic(i)}</div><div class="ln-t"><b>${i.n}</b><small>₹${i.p} ${i.u}</small></div>${ctl(i)}<b class="lp">₹${cart[i.id]*i.p}</b></div>`).join(''):'<div class="empty">Your cart is empty.<br>Add something tasty from the menu.</div>';
+  $('payzone').style.display=has?'':'none';$('bill').style.display=has?'':'none';$('lines').innerHTML=has?ids.map(i=>`<div class="ln"><div class="sm">${pic(i)}</div><div class="ln-t"><b>${i.n}</b><small>₹${i.p} ${i.u}</small></div>${ctl(i)}<b class="lp">₹${cart[i.id]*i.p}</b></div>`).join(''):'<div class="empty">Your cart is empty.<br>Add something tasty from the menu.</div>';
   if(has)$('bill').innerHTML=`<div class="line"><span>Item total</span><span>₹${total()}</span></div><div class="line"><span>Delivery</span><span class="fr">FREE</span></div><div class="line tot"><span>To pay</span><span>₹${total()}</span></div>`;
   check();
 }
-function check(){const ok=count()&&$('flat').value.trim()&&$('wing').value.trim();
-  $('payNow').disabled=!ok;$('paidManual').disabled=!ok;$('payNow').textContent=`Pay now · ₹${total()}`;$('amt').textContent=total();drawQR()}
+function check(){const ok=count()&&$('flat').value.trim()&&$('wing').value.trim();$('payNow').disabled=!ok;$('paidManual').disabled=!ok;$('payNow').textContent=`Pay now · ₹${total()}`;$('amt').textContent=total();drawQR()}
 function upi(){return `upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${total().toFixed(2)}&cu=INR`}
 function drawQR(){const t=upi();if(!count()||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
 $('flat').oninput=$('wing').oninput=check;
 $('uid').textContent=UPI;
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(UPI)}catch(e){const a=document.createElement('textarea');a.value=UPI;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy',1800)};
-$('payNow').onclick=()=>{payOpened=true;location.href=upi()};
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText(UPI)}catch(e){const a=document.createElement('textarea');a.value=UPI;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy',1800)};$('payNow').onclick=()=>{payOpened=true;location.href=upi()};
 // WhatsApp + success
 function waLink(){
   const lines=ITEMS.filter(i=>cart[i.id]).map(i=>`• ${i.n} × ${cart[i.id]} (₹${i.p} each) = ₹${cart[i.id]*i.p}`).join('\n');
@@ -254,8 +248,7 @@ function openWA(){waOpened=true;location.href=waLink()}
 function finish(){waOpened=false;
   $('sum').textContent=ITEMS.filter(i=>cart[i.id]).map(i=>`${i.n} × ${cart[i.id]}`).join(', ')+` · ₹${total()} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
   $('oid').textContent='Order ID: '+oid;show('done');confetti()}
-$('paidManual').onclick=()=>{oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();show('wa');openWA()};
-$('reopen').onclick=openWA;
+$('paidManual').onclick=()=>{oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();show('wa');openWA()};$('reopen').onclick=openWA;
 $('sent').onclick=finish;
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState!=='visible')return;
@@ -266,32 +259,59 @@ function confetti(){const c=['#0c831f','#f8cb46','#ff6b6b','#4dabf7','#b197fc'];
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
   document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
 renderGrid();
-if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',()=>{try{navigator.serviceWorker.register('service-worker.js').catch(()=>{})}catch(e){}})}
 </script>
+
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getMessaging,getToken,onMessage} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
-const app=initializeApp({apiKey:"AIzaSyA8qVjWmPSaw-BXLAtbWtsfCmQOY3ovISo",authDomain:"neetas-food.firebaseapp.com",projectId:"neetas-food",storageBucket:"neetas-food.firebasestorage.app",messagingSenderId:"30666992059",appId:"1:30666992059:web:e7d7b00219940dd7bbbc9e"});
-const VAPID="BFWRIMULOqemLi3e13Vuru6XCLLDb8sAGIUEcE1cR3ypuj-uT_ut-cbn4CohRRe4mbIW1Y6UzjcH7AOkCI4jT28";
-const nb=document.getElementById('notify');
-async function enable(){
-  try{
-    const p=Notification.permission==='granted'?'granted':await Notification.requestPermission();
-    if(p!=='granted')return;
-    const reg=await navigator.serviceWorker.register('service-worker.js');
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyABqVjwmPSaw-BXLAtbWtsfCmQ0Y3ovISo",
+  authDomain: "neetas-food.firebaseapp.com",
+  projectId: "neetas-food",
+  storageBucket: "neetas-food.firebasestorage.app",
+  messagingSenderId: "30666992059",
+  appId: "1:30666992059:web:e7d7b00219940dd7bbbc9e",
+  measurementId: "G-GWYR626DWM"
+};
+
+const app = initializeApp(firebaseConfig);
+const VAPID = "BFWRIMULOqemLi3e13Vuru6XCLLDb8sAGIUEcE1cR3ypuj-uT_ut-cbn4CohRRe4mbIW1Y6UzjcH7A0kCI4jT28";
+const nb = document.getElementById('notify');
+
+async function enable() {
+  try {
+    const p = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+    if (p !== 'granted') return;
+
+    // Registers the firebase-messaging-sw.js created earlier
+    const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
     await navigator.serviceWorker.ready;
-    const m=getMessaging(app);
-    const t=await getToken(m,{vapidKey:VAPID,serviceWorkerRegistration:reg});
+
+    const m = getMessaging(app);
+    const t = await getToken(m, { vapidKey: VAPID, serviceWorkerRegistration: reg });
+
     nb.remove();
-    if(t&&location.search.includes('token'))prompt('Copy this token:',t);
-    else toast('🔔 Notifications are on');
-    onMessage(m,x=>{const n=x.notification||{};toast('🔔 '+(n.title||'')+(n.body?' – '+n.body:''))});
-  }catch(e){console.error(e)}
+    if (t && location.search.includes('token')) {
+      prompt('Copy this token:', t);
+    } else {
+      toast('🔔 Notifications are on');
+    }
+
+    onMessage(m, payload => {
+      const n = payload.notification || {};
+      toast('🔔 ' + (n.title || '') + (n.body ? ' – ' + n.body : ''));
+    });
+  } catch (e) {
+    console.error('Firebase messaging error:', e);
+  }
 }
-if(!('Notification' in window)||!('serviceWorker' in navigator)||Notification.permission==='denied')nb.remove();
-else{
-  document.getElementById('notifyBtn').onclick=enable;
-  if(Notification.permission==='granted')enable();
+
+if (!('Notification' in window) || !('serviceWorker' in navigator) || Notification.permission === 'denied') {
+  nb.remove();
+} else {
+  document.getElementById('notifyBtn').onclick = enable;
+  if (Notification.permission === 'granted') enable();
 }
 </script>
 </body>
