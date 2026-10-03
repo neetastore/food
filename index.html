@@ -4,296 +4,265 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#5c1236">
+<meta name="theme-color" content="#f8cb46">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Neeta's Food Store</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Nunito:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
 <style>
-:root{--bg1:#2a0a2e;--bg2:#5c1236;--gold:#ffc84a;--saffron:#ff8a1f;--rose:#ff4f7b;--ink:#fff4e0;--card:rgba(255,255,255,.08);--line:rgba(255,200,74,.35);
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a0a2e}}
-:root[data-theme="dark"]{--bg1:#2a0a2e}
+:root{--y:#f8cb46;--g:#0c831f;--gl:#e8f5ea;--bg:#f4f6fb;--card:#fff;--ink:#1f1f1f;--mut:#6b7280;--line:#e5e7eb;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121316;--card:#1d1f24;--ink:#f3f4f6;--mut:#9ca3af;--line:#2f3238;--gl:#12301a}}
+:root[data-theme="dark"]{--bg:#121316;--card:#1d1f24;--ink:#f3f4f6;--mut:#9ca3af;--line:#2f3238;--gl:#12301a}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box;margin:0}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:radial-gradient(120% 90% at 20% 0%,var(--bg2),var(--bg1) 70%) fixed,#2a0a2e;overflow-x:hidden}
-h1,h2,h3{font-family:'Rozha One',Georgia,serif;font-weight:400}
-#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.p{position:absolute;bottom:-20px;border-radius:50%;background:radial-gradient(circle,#ffe29a,#ff8a1f 60%,transparent 70%);opacity:.7;animation:rise linear infinite}
-@keyframes rise{to{transform:translateY(-110vh) translateX(var(--dx));opacity:0}}
-.scr{position:fixed;inset:0;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;align-items:center;overflow-y:auto;z-index:1}
-.scr.on{display:flex;animation:in .7s cubic-bezier(.2,.8,.2,1)}
-@keyframes in{from{opacity:0;transform:scale(.94) translateY(30px);filter:blur(8px)}}
-.center{justify-content:center;text-align:center}
-.glow{font-size:clamp(38px,11vw,84px);line-height:1.1;color:#fff;text-shadow:0 0 8px #fff,0 0 22px var(--gold),0 0 48px var(--saffron),0 0 90px var(--rose);animation:pulse 2.6s ease-in-out infinite}
-.glow small{display:block;font-size:.5em;margin-top:8px;color:var(--gold)}
-@keyframes pulse{50%{text-shadow:0 0 4px #fff,0 0 12px var(--gold),0 0 26px var(--saffron),0 0 50px var(--rose);transform:scale(.985)}}
-.tag{margin:18px 0 34px;color:#ffd9a0;font-weight:700;letter-spacing:.04em}
-.btn{position:relative;overflow:hidden;border:0;border-radius:99px;padding:16px 38px;font:800 18px 'Nunito',sans-serif;color:#3b0d1d;background:linear-gradient(90deg,var(--gold),var(--saffron),var(--gold));background-size:200% 100%;cursor:pointer;box-shadow:0 0 0 0 rgba(255,200,74,.7),0 10px 30px rgba(255,138,31,.45);animation:ring 2s infinite,slide 3s linear infinite;transition:transform .2s}
-.btn:active{transform:scale(.95)}
-.btn:disabled{opacity:.45;animation:none;cursor:not-allowed}
-.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:shine 2.8s infinite}
-@keyframes ring{70%{box-shadow:0 0 0 18px rgba(255,200,74,0),0 10px 30px rgba(255,138,31,.45)}}
-@keyframes slide{to{background-position:200% 0}}
-@keyframes shine{60%,100%{left:130%}}
-.top{width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.top h2{font-size:26px;color:var(--gold);text-shadow:0 0 18px rgba(255,138,31,.7)}
-.cartb{position:relative;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:99px;padding:10px 18px;font:800 15px 'Nunito',sans-serif;cursor:pointer;backdrop-filter:blur(8px)}
-.badge{position:absolute;top:-8px;right:-4px;background:var(--rose);color:#fff;border-radius:99px;min-width:22px;height:22px;display:none;place-items:center;font-size:12px}
-.badge.show{display:grid;animation:pop .4s}
-@keyframes pop{50%{transform:scale(1.5)}}
-.item{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:22px;text-align:center;backdrop-filter:blur(10px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.pic{width:min(70vw,250px);aspect-ratio:1;margin:6px auto 0;border:0;background:radial-gradient(circle,rgba(255,200,74,.35),transparent 65%);border-radius:50%;cursor:pointer;animation:float 3.6s ease-in-out infinite;transition:transform .3s}
-.pic:hover{transform:scale(1.08) rotate(-4deg)}
-.mimg{object-fit:cover;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 30px rgba(255,138,31,.6),0 14px 24px rgba(0,0,0,.5)}
-.pic .mimg,.pic svg{width:100%;height:100%}
-.pic svg{filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
-@keyframes float{50%{translate:0 -14px}}
-.item h3{font-size:32px;margin-top:10px;color:var(--gold)}
-.price{font-weight:800;font-size:20px;margin:4px 0 10px}
-.hint{color:#ffd9a0;font-size:14px;animation:blink 1.8s infinite}
-@keyframes blink{50%{opacity:.4}}
-.modal{position:fixed;inset:0;z-index:5;background:rgba(20,0,20,.7);backdrop-filter:blur(6px);display:none;align-items:flex-end;justify-content:center}
-.modal.on{display:flex}
-.sheet{width:100%;max-width:520px;background:linear-gradient(160deg,#4a1240,#2a0a2e);border:1px solid var(--line);border-radius:28px 28px 0 0;padding:26px 22px calc(26px + env(safe-area-inset-bottom,0px));text-align:center;animation:up .45s cubic-bezier(.2,.9,.3,1.2)}
-@keyframes up{from{transform:translateY(100%)}}
-.sheet svg,.sheet .mimg{width:110px;height:110px}
-.step{display:flex;align-items:center;justify-content:center;gap:22px;margin:16px 0}
-.step button{width:52px;height:52px;border-radius:50%;border:1px solid var(--gold);background:var(--card);color:var(--gold);font-size:28px;cursor:pointer;transition:transform .15s}
-.step button:active{transform:scale(.85)}
-.step b{font:400 44px 'Rozha One',serif;min-width:60px;color:#fff;text-shadow:0 0 16px var(--gold)}
-.sub{margin-bottom:16px;color:#ffd9a0;font-weight:700}
-.close{background:none;border:0;color:#ffd9a0;margin-top:14px;font:700 14px 'Nunito',sans-serif;cursor:pointer}
-.panel{width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:18px;margin-bottom:14px;backdrop-filter:blur(10px)}
-.panel h3{font-size:20px;color:var(--gold);margin-bottom:10px}
-.line{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0}
-.total{border-top:1px dashed var(--line);margin-top:8px;padding-top:12px;font-size:22px;font-weight:800}
-.total span:last-child{color:var(--gold);text-shadow:0 0 14px var(--saffron)}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden}
+.scr{position:fixed;inset:0;display:none;flex-direction:column;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.scr.on{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+body.tabs-on .scr{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.w{padding:0 14px}
+/* welcome */
+.center{align-items:center;justify-content:center;text-align:center;padding:24px;background:linear-gradient(160deg,#ffe27a,var(--y) 55%,#f3b81f)}
+.center *{color:#1f1f1f}
+.bigem{font-size:76px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-12px) rotate(-6deg)}}
+.glow{font-size:clamp(32px,9vw,56px);line-height:1.15;font-weight:900;margin:14px 0 8px;text-shadow:0 0 14px #fff,0 0 34px rgba(255,255,255,.9);animation:gl 2.4s ease-in-out infinite}
+@keyframes gl{50%{text-shadow:0 0 6px #fff,0 0 16px rgba(255,255,255,.6)}}
+.sub{font-weight:700;opacity:.8;margin-bottom:28px}
+.btn{border:0;border-radius:14px;padding:15px 34px;font:900 17px 'Nunito',sans-serif;background:var(--g);color:#fff!important;cursor:pointer;box-shadow:0 8px 20px rgba(12,131,31,.35);transition:transform .15s}
+.btn:active{transform:scale(.96)}
+.btn:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed}
+.btn.full{width:100%}
+.btn.line2{background:var(--card);color:var(--g)!important;border:2px solid var(--g);box-shadow:none}
+.pulse{animation:pl 1s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 8px rgba(12,131,31,.25)}}
+/* header */
+.hd{background:var(--y);padding:calc(14px + env(safe-area-inset-top,0px)) 14px 14px;border-radius:0 0 22px 22px;color:#1f1f1f}
+.hd small{display:block;font-weight:800;font-size:12px;opacity:.75}
+.hd .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.hd b{font-size:19px;font-weight:900}
+.eta{background:#1f1f1f;color:var(--y);border-radius:10px;padding:6px 10px;font-weight:900;font-size:13px}
+.search{width:100%;padding:13px 14px;border:0;border-radius:12px;background:#fff;color:#1f1f1f;font:700 15px 'Nunito',sans-serif;outline:0}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 16px;font:800 14px 'Nunito',sans-serif;cursor:pointer;transition:.2s}
+.chip.on{background:var(--g);border-color:var(--g);color:#fff}
+.banner{margin:0 14px 12px;border-radius:16px;padding:14px 16px;background:linear-gradient(90deg,#0c831f,#2fb44a);color:#fff;font-weight:900;display:flex;justify-content:space-between;align-items:center}
+.banner span{font-size:34px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;animation:in .4s both}
+.im{aspect-ratio:1;border-radius:12px;background:linear-gradient(145deg,#fff4cc,#ffe9a8);display:grid;place-items:center;overflow:hidden}
+.im img,.sm img{width:100%;height:100%;object-fit:cover}
+.im svg{width:78%;height:78%}
+.em{font-size:56px;line-height:1}
+.nm{font-weight:900;margin-top:8px;font-size:15px;line-height:1.2}
+.un{color:var(--mut);font-size:12px;font-weight:700;margin-top:2px}
+.pr{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px}
+.pr b{font-size:16px}
+.add{border:1.5px solid var(--g);background:var(--gl);color:var(--g);border-radius:10px;padding:7px 18px;font:900 13px 'Nunito',sans-serif;cursor:pointer}
+.stp{display:flex;align-items:center;background:var(--g);border-radius:10px;overflow:hidden}
+.stp button{border:0;background:none;color:#fff;font:900 18px 'Nunito',sans-serif;width:30px;height:32px;cursor:pointer}
+.stp span{color:#fff;font-weight:900;min-width:22px;text-align:center}
+.empty{text-align:center;padding:30px 10px;color:var(--mut);font-weight:700;grid-column:1/-1}
+/* bars */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:4;display:none;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));justify-content:space-around}
+body.tabs-on .tabs{display:flex}
+.tab{position:relative;flex:1;border:0;background:none;color:var(--mut);font:800 11px 'Nunito',sans-serif;padding:4px 0;cursor:pointer}
+.tab i{display:block;font-style:normal;font-size:22px}
+.tab.act{color:var(--g)}
+.badge{position:absolute;top:-2px;left:56%;background:var(--g);color:#fff;border-radius:99px;min-width:19px;height:19px;font-size:11px;display:none;place-items:center}
+.badge.show{display:grid}
+.cbar{position:fixed;left:12px;right:12px;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:4;display:none;justify-content:space-between;align-items:center;padding:13px 18px;border:0;border-radius:16px;background:var(--g);color:#fff;font:900 16px 'Nunito',sans-serif;box-shadow:0 10px 26px rgba(12,131,31,.45);cursor:pointer}
+.cbar.on{display:flex;animation:in .3s}
+.toast{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));z-index:40;transform:translate(-50%,30px);opacity:0;background:#1f1f1f;color:#fff;padding:11px 18px;border-radius:12px;font-weight:800;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.on{transform:translate(-50%,0);opacity:1}
+/* cart */
+.top{display:flex;align-items:center;gap:10px;background:var(--y);padding:calc(14px + env(safe-area-inset-top,0px)) 14px 14px;color:#1f1f1f}
+.top h2{font-size:21px;font-weight:900}
+.back{border:0;background:#fff;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer;color:#1f1f1f}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 14px 0}
+.panel h3{font-size:16px;font-weight:900;margin-bottom:10px}
+.ln{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ln:last-child{border:0}
+.sm{width:48px;height:48px;border-radius:10px;background:#ffeeb8;display:grid;place-items:center;overflow:hidden;flex:none}
+.sm svg{width:80%;height:80%}.sm .em{font-size:28px}
+.ln-t{flex:1;min-width:0}.ln-t small{display:block;color:var(--mut);font-weight:700}
+.lp{min-width:54px;text-align:right}
+.line{display:flex;justify-content:space-between;padding:5px 0;font-weight:700}
+.tot{border-top:1px dashed var(--line);margin-top:6px;padding-top:10px;font-size:18px;font-weight:900}
+.fr{color:var(--g);font-weight:900}
 .row{display:flex;gap:10px}
-input{width:100%;padding:14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.3);color:#fff;font:700 16px 'Nunito',sans-serif;outline:0;transition:box-shadow .2s}
-input:focus{box-shadow:0 0 0 3px var(--saffron)}
-input::placeholder{color:#c9a7b0}
-.pay{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pay label{cursor:pointer}
-.pay input{display:none}
-.pay span{display:block;text-align:center;padding:14px 6px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);font-weight:800;transition:.25s}
-.pay input:checked+span{background:linear-gradient(135deg,var(--gold),var(--saffron));color:#3b0d1d;transform:scale(1.04);box-shadow:0 0 22px rgba(255,138,31,.7)}
-.back{background:none;border:0;color:#ffd9a0;font:800 15px 'Nunito',sans-serif;cursor:pointer}
-.empty{text-align:center;padding:20px;color:#ffd9a0}
-.ok{width:170px;height:170px}
-.ok circle{fill:none;stroke:var(--gold);stroke-width:5;stroke-dasharray:340;stroke-dashoffset:340;animation:draw .9s .1s forwards;filter:drop-shadow(0 0 10px var(--saffron))}
-.ok path{fill:none;stroke:#fff;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:90;stroke-dashoffset:90;animation:draw .6s .95s forwards;filter:drop-shadow(0 0 8px var(--gold))}
-.ok .fill{fill:rgba(255,200,74,.18);stroke:none;opacity:0;animation:fadein .5s .8s forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-@keyframes fadein{to{opacity:1}}
-.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:6;pointer-events:none;animation:fall linear forwards}
+input.f{width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:700 16px 'Nunito',sans-serif;outline:0}
+input.f:focus{border-color:var(--g)}
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:800;color:var(--g)}
+.hint{color:var(--mut);font-size:13px;font-weight:700;margin-top:8px;text-align:center}
+.cp{border:1px solid var(--g);background:var(--gl);color:var(--g);border-radius:10px;padding:7px 14px;font:800 13px 'Nunito',sans-serif;cursor:pointer}
+/* success */
+.ok{width:150px;height:150px}
+.ok circle{fill:var(--g);transform-origin:center;animation:cp .5s cubic-bezier(.2,1.4,.4,1) both}
+.ok path{fill:none;stroke:#fff;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:90;stroke-dashoffset:90;animation:dr .6s .45s forwards}
+@keyframes cp{from{transform:scale(0)}}
+@keyframes dr{to{stroke-dashoffset:0}}
+.ring{position:relative}
+.ring::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:3px solid var(--g);opacity:0;animation:rg 1.4s .4s ease-out infinite}
+@keyframes rg{from{transform:scale(.8);opacity:.7}to{transform:scale(1.35);opacity:0}}
+.conf{position:fixed;top:-20px;width:10px;height:16px;z-index:60;pointer-events:none;animation:fall linear forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
-.oid{margin-top:14px;font-weight:800;color:var(--gold)}
+.oid{margin-top:12px;font-weight:900;color:var(--g)!important}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
-
-.grid{width:100%;max-width:520px;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-bottom:24px}
-.card{max-width:none;padding:14px;border-radius:22px;animation:in .6s both;animation-delay:calc(var(--i)*70ms)}
-.gpic{width:100%;aspect-ratio:1;padding:0;border:0;border-radius:50%;background:radial-gradient(circle,rgba(255,200,74,.3),transparent 65%);cursor:pointer;display:grid;place-items:center;animation:float 3.6s ease-in-out infinite;animation-delay:calc(var(--i)*-.45s);transition:transform .3s}
-.gpic:hover{transform:scale(1.08) rotate(-4deg)}
-.gpic .mimg,.gpic svg{width:100%;height:100%}
-.gpic svg{filter:drop-shadow(0 12px 18px rgba(0,0,0,.45))}
-.em{font-size:64px;line-height:1;filter:drop-shadow(0 8px 12px rgba(0,0,0,.45))}
-.card h3{font-size:19px;margin-top:8px}
-.card .price{font-size:17px;margin:2px 0 0}
-.card small{display:block;font-size:12px;color:#ffd9a0;font-weight:700}
-.sheet .em{font-size:80px}
-
-.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:4;display:none;justify-content:space-around;padding:8px;border-radius:26px;background:rgba(40,8,44,.82);border:1px solid var(--line);backdrop-filter:blur(16px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
-body.tabs-on .tabs{display:flex;animation:up .5s cubic-bezier(.2,.9,.3,1.2)}
-body.tabs-on .scr{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
-.tab{position:relative;flex:1;border:0;background:none;color:#d9b8c2;font:800 12px 'Nunito',sans-serif;padding:6px 0;cursor:pointer;transition:.3s;border-radius:18px}
-.tab i{display:block;font-style:normal;font-size:22px;transition:transform .3s}
-.tab.act{color:var(--gold);background:rgba(255,200,74,.14);text-shadow:0 0 12px var(--saffron)}
-.tab.act i{transform:translateY(-3px) scale(1.2)}
-.tab .badge{top:0;right:22%}
-.cbar{position:fixed;left:18px;right:18px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:4;display:none;justify-content:space-between;align-items:center;padding:14px 20px;border:0;border-radius:20px;background:linear-gradient(90deg,var(--gold),var(--saffron));color:#3b0d1d;font:800 16px 'Nunito',sans-serif;box-shadow:0 10px 30px rgba(255,138,31,.5);cursor:pointer}
-.cbar.on{display:flex;animation:up .45s cubic-bezier(.2,.9,.3,1.2)}
-.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;z-index:40;transform:translate(-50%,-140%);background:#fff4e0;color:#3b0d1d;font-weight:800;padding:12px 22px;border-radius:99px;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:transform .45s cubic-bezier(.2,.9,.3,1.3);white-space:nowrap}
-.toast.on{transform:translate(-50%,0)}
-.pill{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:800;color:#ffd9a0}
-#splash{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(120% 90% at 20% 0%,#5c1236,#2a0a2e 70%);animation:sOut .6s 1.3s forwards}
-#splash svg{width:120px;height:120px;animation:float 1.6s ease-in-out infinite,sPop .8s cubic-bezier(.2,.9,.3,1.4)}
-#splash b{font:400 26px 'Rozha One',serif;color:#fff;text-shadow:0 0 18px var(--saffron)}
-@keyframes sOut{to{opacity:0;visibility:hidden}}
-@keyframes sPop{from{transform:scale(.2);opacity:0}}
 </style>
 </head>
 <body>
-<div id="fx"></div>
-
 <svg width="0" height="0" style="position:absolute"><defs>
 <radialGradient id="mg" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="#fff7dc"/><stop offset=".55" stop-color="#ffd98a"/><stop offset="1" stop-color="#e59a2e"/></radialGradient>
-<symbol id="modak" viewBox="0 0 120 120">
-<path d="M60 6c7 14 3 22 0 28 36 5 50 36 38 58-9 16-67 16-76 0-12-22 2-53 38-58-3-6-7-14 0-28z" fill="url(#mg)"/>
-<path d="M60 34c-14 18-16 44-8 64M60 34c-4 20-4 44 0 64M60 34c14 18 16 44 8 64M60 34c-24 10-34 34-28 56M60 34c24 10 34 34 28 56" fill="none" stroke="#c9781a" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
-<ellipse cx="44" cy="52" rx="9" ry="16" fill="#fff" opacity=".45" transform="rotate(20 44 52)"/>
-</symbol></defs></svg>
+<symbol id="modak" viewBox="0 0 120 120"><path d="M60 6c7 14 3 22 0 28 36 5 50 36 38 58-9 16-67 16-76 0-12-22 2-53 38-58-3-6-7-14 0-28z" fill="url(#mg)"/><path d="M60 34c-14 18-16 44-8 64M60 34c-4 20-4 44 0 64M60 34c14 18 16 44 8 64M60 34c-24 10-34 34-28 56M60 34c24 10 34 34 28 56" fill="none" stroke="#c9781a" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/><ellipse cx="44" cy="52" rx="9" ry="16" fill="#fff" opacity=".45" transform="rotate(20 44 52)"/></symbol></defs></svg>
 
-<!-- Welcome -->
 <section class="scr center on" id="welcome">
-  <h1 class="glow">Welcome to<small>Neeta's Food Store</small></h1>
-  <p class="tag">Fresh, homemade sweets, delivered to your door</p>
+  <div class="bigem">🍡</div>
+  <h1 class="glow">Welcome to<br>Neeta's Food Store</h1>
+  <p class="sub">Fresh, homemade food delivered to your door</p>
   <button class="btn" id="go">Continue</button>
 </section>
 
-<!-- Shop -->
 <section class="scr" id="shop">
-  <div class="top"><h2>Our menu</h2><span class="pill">Fresh &amp; homemade</span></div>
-  <p class="hint" style="margin-bottom:14px">Tap a food to choose quantity</p>
+  <div class="hd">
+    <div class="row1"><div><small>Delivering to your flat in</small><b>Neeta's Food Store</b></div><span class="eta">⚡ 30 min</span></div>
+    <input class="search" id="q" placeholder='Search "modak", "pizza"…' autocomplete="off">
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="banner"><div>Fresh &amp; homemade<br><small>Free delivery on every order</small></div><span>🍡</span></div>
   <div class="grid" id="grid"></div>
 </section>
 
-<!-- Cart -->
 <section class="scr" id="cart">
-  <div class="top"><button class="back" id="back">‹ Menu</button><h2>Your cart</h2></div>
+  <div class="top"><button class="back" id="back">‹</button><h2>My Cart</h2></div>
   <div class="panel" id="lines"></div>
-  <div class="panel" id="details">
-    <h3>Delivery address</h3>
-    <div class="row"><input id="flat" placeholder="Flat number" inputmode="numeric" autocomplete="off"><input id="wing" placeholder="Bldg wing" autocomplete="off"></div>
-  </div>
-  <div class="panel" id="manual">
-    <h3>Pay by UPI</h3>
-    <p class="sub" style="margin-bottom:8px">Send ₹<span id="amt">0</span> to this UPI ID from any UPI app:</p>
-    <div class="line"><b id="uid" style="font-size:16px;word-break:break-all"></b><button class="cartb" id="copy">Copy</button></div>
-    <div id="qr" style="background:#fff;padding:10px;border-radius:14px;width:fit-content;margin:12px auto"></div>
-    <p class="sub" style="font-size:13px;text-align:center">Or scan this QR from another phone</p>
-    <button class="btn" id="paidManual" disabled style="width:100%">I've paid, send my order</button>
+  <div class="panel" id="bill"></div>
+  <div id="payzone">
+    <div class="panel"><h3>Delivery address</h3><div class="row"><input class="f" id="flat" placeholder="Flat number" inputmode="numeric" autocomplete="off"><input class="f" id="wing" placeholder="Bldg wing" autocomplete="off"></div></div>
+    <div class="panel">
+      <h3>Payment</h3>
+      <button class="btn full" id="payNow" disabled>Pay now</button>
+      <p class="hint">Opens your UPI app (GPay, PhonePe, Paytm…) with the amount filled in</p>
+      <details>
+        <summary>App shows an error? Pay manually</summary>
+        <p class="hint" style="text-align:left">Send ₹<span id="amt">0</span> to this UPI ID from any UPI app:</p>
+        <div class="line"><b id="uid" style="word-break:break-all"></b><button class="cp" id="copy">Copy</button></div>
+        <div id="qr" style="background:#fff;padding:10px;border-radius:12px;width:fit-content;margin:10px auto"></div>
+      </details>
+    </div>
+    <div class="panel"><button class="btn line2 full" id="paidManual" disabled>I've paid, send my order</button></div>
   </div>
 </section>
 
-<!-- WhatsApp step -->
 <section class="scr center" id="wa">
-  <div class="panel" style="text-align:center">
-    <h3>Send your order on WhatsApp</h3>
-    <p class="sub">Your order details are filled in. Tap Send in WhatsApp, then come back here.</p>
-    <button class="btn" id="sent">I've sent the message</button><br>
-    <button class="close" id="reopen">Open WhatsApp again</button>
+  <div class="panel" style="text-align:center;margin:0;width:100%;max-width:420px">
+    <h3 style="font-size:20px">Send your order on WhatsApp</h3>
+    <p class="hint" style="margin:6px 0 16px">Your order details are filled in. Tap Send in WhatsApp, then come back here.</p>
+    <button class="btn full" id="sent">I've sent the message</button>
+    <button class="btn line2 full" id="reopen" style="margin-top:10px">Open WhatsApp again</button>
   </div>
 </section>
 
-<!-- Success -->
-<section class="scr center" id="done">
-  <svg class="ok" viewBox="0 0 120 120"><circle class="fill" cx="60" cy="60" r="54" style="fill:rgba(255,200,74,.18)"/><circle cx="60" cy="60" r="54"/><path d="M36 62l16 16 32-34"/></svg>
-  <h1 class="glow" style="font-size:clamp(32px,9vw,60px);margin-top:18px">Congratulations!</h1>
-  <p class="tag" style="margin-bottom:10px;font-size:20px">Your order is placed!</p>
-  <p id="sum" style="color:#ffd9a0;font-weight:700"></p>
+<section class="scr center" id="done" style="background:var(--bg)">
+  <div class="ring"><svg class="ok" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56"/><path d="M36 62l16 16 32-34"/></svg></div>
+  <h1 class="glow" style="font-size:clamp(30px,8vw,46px);margin-top:22px;text-shadow:none;animation:none;color:var(--ink)!important">Congratulations!</h1>
+  <p style="font-size:20px;font-weight:900;color:var(--g)!important;margin-bottom:10px">Your order is placed!</p>
+  <p id="sum" style="color:var(--mut)!important;font-weight:700"></p>
   <p class="oid" id="oid"></p>
 </section>
 
-<!-- Quantity sheet -->
-<div class="modal" id="qm">
-  <div class="sheet">
-    <div id="sheetPic"></div>
-    <h3 id="sheetName" style="font-size:28px;color:var(--gold)"></h3>
-    <p class="sub" id="sheetUnit"></p>
-    <div class="step"><button id="minus" aria-label="Less">−</button><b id="q">1</b><button id="plus" aria-label="More">+</button></div>
-    <p class="sub" id="qt">Total ₹25</p>
-    <button class="btn" id="add">Add to cart</button><br>
-    <button class="close" id="cancel">Cancel</button>
-  </div>
-</div>
-
-<div id="splash"><svg viewBox="0 0 120 120"><use href="#modak"/></svg><b>Neeta's Food Store</b></div>
-<div class="toast" id="toast"></div>
 <button class="cbar" id="cbar"><span id="cbarT"></span><span>View cart ›</span></button>
+<div class="toast" id="toast"></div>
 <nav class="tabs">
-  <button class="tab act" data-t="shop" id="tabMenu"><i>🍽️</i>Menu</button>
+  <button class="tab act" data-t="shop" id="tabMenu"><i>🏠</i>Home</button>
   <button class="tab" data-t="cart" id="cartBtn"><i>🛒</i>Cart <span class="badge" id="badge">0</span></button>
   <button class="tab" data-t="help" id="tabHelp"><i>💬</i>Help</button>
 </nav>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const NAME="Neeta's Food Store",UPI="sarthakk760@okhdfcbank",WA="918291697606";
 const ITEMS=[
-{id:'modak',n:'Modak',p:25,u:'per piece',e:'🍡',img:'modak.jpg'},
-{id:'puran',n:'Puran Poli',p:70,u:'per piece',e:'🥞',img:'puran-poli.jpg'},
-{id:'jwari',n:'Jwari Roti',p:50,u:'per piece',e:'🥙',img:'jwari-roti.jpg'},
-{id:'thali',n:'Thali Plate',p:200,u:'per plate',e:'🍛',img:'thali.jpg'},
-{id:'pizza',n:'Pizza',p:100,u:'each',e:'🍕',img:'pizza.jpg'},
-{id:'pasta',n:'Pasta',p:80,u:'each',e:'🍝',img:'pasta.jpg'},
-{id:'burger',n:'Burger',p:80,u:'each',e:'🍔',img:'burger.jpg'},
-{id:'cmaggi',n:'Cheese Maggi',p:70,u:'each',e:'🍜',img:'cheese-maggi.jpg'},
-{id:'smaggi',n:'Spicy Maggi',p:70,u:'each',e:'🌶️',img:'spicy-maggi.jpg'},
-{id:'scmaggi',n:'Spicy Cheese Maggi',p:100,u:'each',e:'🧀',img:'spicy-cheese-maggi.jpg'}];
+{id:'modak',n:'Modak',p:25,u:'per piece',e:'🍡',c:'Sweets',img:'modak.jpg'},
+{id:'puran',n:'Puran Poli',p:70,u:'per piece',e:'🥞',c:'Sweets',img:'puran-poli.jpg'},
+{id:'jwari',n:'Jwari Roti',p:50,u:'per piece',e:'🥙',c:'Meals',img:'jwari-roti.jpg'},
+{id:'thali',n:'Thali Plate',p:200,u:'per plate',e:'🍛',c:'Meals',img:'thali.jpg'},
+{id:'pizza',n:'Pizza',p:100,u:'each',e:'🍕',c:'Fast food',img:'pizza.jpg'},
+{id:'pasta',n:'Pasta',p:80,u:'each',e:'🍝',c:'Fast food',img:'pasta.jpg'},
+{id:'burger',n:'Burger',p:80,u:'each',e:'🍔',c:'Fast food',img:'burger.jpg'},
+{id:'cmaggi',n:'Cheese Maggi',p:70,u:'each',e:'🍜',c:'Maggi',img:'cheese-maggi.jpg'},
+{id:'smaggi',n:'Spicy Maggi',p:70,u:'each',e:'🌶️',c:'Maggi',img:'spicy-maggi.jpg'},
+{id:'scmaggi',n:'Spicy Cheese Maggi',p:100,u:'each',e:'🧀',c:'Maggi',img:'spicy-cheese-maggi.jpg'}];
+const CATS=['All','Sweets','Meals','Fast food','Maggi'];
 const $=id=>document.getElementById(id);
-const cart={};let cur="welcome",sel=null,q=1,oid="",waOpened=false,lastQR="";
+const cart={};let cur='welcome',cat='All',term='',oid='',waOpened=false,payOpened=false,lastQR='',tt;
 const count=()=>Object.values(cart).reduce((a,b)=>a+b,0);
 const total=()=>ITEMS.reduce((a,i)=>a+(cart[i.id]||0)*i.p,0);
-const pic=i=>`<img class="mimg" data-id="${i.id}" src="${i.img}" alt="${i.n}">`;
-// photo missing -> drawn modak / emoji fallback
-document.addEventListener('error',e=>{const el=e.target;if(el.tagName!=='IMG'||!el.dataset.id)return;
-  const i=ITEMS.find(x=>x.id===el.dataset.id);
+const pic=i=>`<img data-id="${i.id}" src="${i.img}" alt="${i.n}">`;
+document.addEventListener('error',e=>{const el=e.target;if(el.tagName!=='IMG'||!el.dataset.id)return;const i=ITEMS.find(x=>x.id===el.dataset.id);
   if(i.id==='modak'){const n='http://www.w3.org/2000/svg',v=document.createElementNS(n,'svg'),u=document.createElementNS(n,'use');v.setAttribute('viewBox','0 0 120 120');u.setAttribute('href','#modak');v.appendChild(u);el.replaceWith(v)}
-  else{const sp=document.createElement('span');sp.className='em';sp.textContent=i.e;el.replaceWith(sp)}},true);
+  else{const s=document.createElement('span');s.className='em';s.textContent=i.e;el.replaceWith(s)}},true);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
 function show(id){document.querySelectorAll('.scr').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0;
   document.body.classList.toggle('tabs-on',id==='shop'||id==='cart');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('act',t.dataset.t===id));updBar()}
-function updBar(){const n=count();$('cbar').classList.toggle('on',n>0&&cur==='shop');$('cbarT').textContent=`🛒 ${n} item${n>1?'s':''} · ₹${total()}`}
-let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
-// floating embers
-const fx=$('fx');
-for(let i=0;i<26;i++){const p=document.createElement('i');p.className='p';const z=4+Math.random()*10;
-p.style.cssText=`left:${Math.random()*100}%;width:${z}px;height:${z}px;--dx:${(Math.random()-.5)*120}px;animation-duration:${7+Math.random()*9}s;animation-delay:${-Math.random()*12}s`;fx.appendChild(p)}
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('act',t.dataset.t===id));badge()}
+function badge(){const n=count(),b=$('badge');b.textContent=n;b.classList.toggle('show',n>0);
+  $('cbar').classList.toggle('on',n>0&&cur==='shop');$('cbarT').textContent=`${n} item${n>1?'s':''} · ₹${total()}`}
+// shop
+$('chips').innerHTML=CATS.map(c=>`<button class="chip${c==='All'?' on':''}" data-c="${c}">${c}</button>`).join('');
+$('chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));renderGrid()};
+$('q').oninput=e=>{term=e.target.value.trim().toLowerCase();renderGrid()};
+const ctl=i=>cart[i.id]?`<div class="stp"><button data-a="-" data-id="${i.id}">−</button><span>${cart[i.id]}</span><button data-a="+" data-id="${i.id}">+</button></div>`:`<button class="add" data-a="+" data-id="${i.id}">ADD</button>`;
+function renderGrid(){const L=ITEMS.filter(i=>(cat==='All'||i.c===cat)&&i.n.toLowerCase().includes(term));
+  $('grid').innerHTML=L.length?L.map((i,k)=>`<div class="card" style="animation-delay:${k*50}ms"><div class="im">${pic(i)}</div><div class="nm">${i.n}</div><div class="un">${i.u}</div><div class="pr"><b>₹${i.p}</b>${ctl(i)}</div></div>`).join(''):'<p class="empty">No items found</p>'}
+function chg(id,d){cart[id]=Math.min(Math.max((cart[id]||0)+d,0),100);if(!cart[id])delete cart[id];
+  try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}renderGrid();badge();if(cur==='cart')render()}
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(b)chg(b.dataset.id,b.dataset.a==='+'?1:-1)});
+// navigation
 $('go').onclick=()=>show('shop');
-// menu
-$('grid').innerHTML=ITEMS.map((i,k)=>`<div class="item card" style="--i:${k}"><button class="gpic" data-id="${i.id}" aria-label="${i.n}">${pic(i)}</button><h3>${i.n}</h3><p class="price">₹${i.p}<small>${i.u}</small></p></div>`).join('');
-$('grid').onclick=e=>{const b=e.target.closest('.gpic');if(!b)return;sel=ITEMS.find(x=>x.id===b.dataset.id);q=1;
-  $('sheetPic').innerHTML=pic(sel);$('sheetName').textContent=sel.n;$('sheetUnit').textContent=`₹${sel.p} ${sel.u}`;upd();$('qm').classList.add('on')};
-function upd(){$('q').textContent=q;$('qt').textContent='Total ₹'+q*sel.p}
-$('plus').onclick=()=>{q=Math.min(q+1,100);upd()};
-$('minus').onclick=()=>{q=Math.max(q-1,1);upd()};
-$('cancel').onclick=()=>$('qm').classList.remove('on');
-$('add').onclick=()=>{cart[sel.id]=Math.min((cart[sel.id]||0)+q,100);$('qm').classList.remove('on');badge();try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}toast(`✓ ${sel.n} × ${q} added`)};
-function badge(){const b=$('badge');b.textContent=count();b.classList.remove('show');if(count()){void b.offsetWidth;b.classList.add('show')}updBar()}
-$('cartBtn').onclick=()=>{show('cart');render()};
-$('back').onclick=()=>show('shop');
 $('tabMenu').onclick=()=>show('shop');
-$('cbar').onclick=()=>{show('cart');render()};
+$('cartBtn').onclick=$('cbar').onclick=()=>{show('cart');render()};
+$('back').onclick=()=>show('shop');
 $('tabHelp').onclick=()=>{location.href=`https://wa.me/${WA}?text=${encodeURIComponent('Hi, I need help with my order')}`};
-setTimeout(()=>$('splash').remove(),2100);
 // cart
 function render(){
-  const L=$('lines'),ids=ITEMS.filter(i=>cart[i.id]);
-  if(!ids.length){L.innerHTML='<div class="empty">Your cart is empty. Tap a food on the menu to add it.</div>';check();return}
-  L.innerHTML='<h3>Order</h3>'+ids.map(i=>`<div class="line"><span>${i.n} × ${cart[i.id]}</span><span>₹${cart[i.id]*i.p}</span></div><div class="line"><span class="step" style="margin:0 0 6px;gap:14px;justify-content:flex-start"><button style="width:38px;height:38px;font-size:22px" data-a="-" data-id="${i.id}">−</button><button style="width:38px;height:38px;font-size:22px" data-a="+" data-id="${i.id}">+</button></span><span></span></div>`).join('')+`<div class="line total"><span>Total</span><span>₹${total()}</span></div>`;
+  const ids=ITEMS.filter(i=>cart[i.id]),has=ids.length>0;
+  $('payzone').style.display=has?'':'none';$('bill').style.display=has?'':'none';
+  $('lines').innerHTML=has?ids.map(i=>`<div class="ln"><div class="sm">${pic(i)}</div><div class="ln-t"><b>${i.n}</b><small>₹${i.p} ${i.u}</small></div>${ctl(i)}<b class="lp">₹${cart[i.id]*i.p}</b></div>`).join(''):'<div class="empty">Your cart is empty.<br>Add something tasty from the menu.</div>';
+  if(has)$('bill').innerHTML=`<div class="line"><span>Item total</span><span>₹${total()}</span></div><div class="line"><span>Delivery</span><span class="fr">FREE</span></div><div class="line tot"><span>To pay</span><span>₹${total()}</span></div>`;
   check();
 }
-$('lines').onclick=e=>{const b=e.target.closest('button[data-a]');if(!b)return;const id=b.dataset.id;
-  cart[id]=Math.max((cart[id]||0)+(b.dataset.a==='+'?1:-1),0);if(!cart[id])delete cart[id];badge();render()};
-function check(){const ok=count()&&$('flat').value.trim()&&$('wing').value.trim();$('paidManual').disabled=!ok;$('amt').textContent=total();drawQR()}
-function drawQR(){const t=`upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${total().toFixed(2)}&cu=INR`;
-  if(!count()||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
+function check(){const ok=count()&&$('flat').value.trim()&&$('wing').value.trim();
+  $('payNow').disabled=!ok;$('paidManual').disabled=!ok;$('payNow').textContent=`Pay now · ₹${total()}`;$('amt').textContent=total();drawQR()}
+function upi(){return `upi://pay?pa=${UPI}&pn=${encodeURIComponent(NAME)}&am=${total().toFixed(2)}&cu=INR`}
+function drawQR(){const t=upi();if(!count()||t===lastQR||typeof QRCode==='undefined')return;lastQR=t;$('qr').innerHTML='';new QRCode($('qr'),{text:t,width:170,height:170})}
 $('flat').oninput=$('wing').oninput=check;
 $('uid').textContent=UPI;
 $('copy').onclick=async()=>{try{await navigator.clipboard.writeText(UPI)}catch(e){const a=document.createElement('textarea');a.value=UPI;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}$('copy').textContent='Copied';setTimeout(()=>$('copy').textContent='Copy',1800)};
+$('payNow').onclick=()=>{payOpened=true;location.href=upi()};
 // WhatsApp + success
 function waLink(){
   const lines=ITEMS.filter(i=>cart[i.id]).map(i=>`• ${i.n} × ${cart[i.id]} (₹${i.p} each) = ₹${cart[i.id]*i.p}`).join('\n');
   const msg=`*New order - ${NAME}*\nOrder ID: ${oid}\n\n${lines}\n\n*Total: ₹${total()}*\nPaid via: UPI\n\nFlat: ${$('flat').value.trim()}\nWing: ${$('wing').value.trim()}`;
-  return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
-}
+  return `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
 function openWA(){waOpened=true;location.href=waLink()}
-function finish(){
-  waOpened=false;
+function finish(){waOpened=false;
   $('sum').textContent=ITEMS.filter(i=>cart[i.id]).map(i=>`${i.n} × ${cart[i.id]}`).join(', ')+` · ₹${total()} · Flat ${$('flat').value.trim()}, Wing ${$('wing').value.trim()}`;
-  $('oid').textContent='Order ID: '+oid;
-  show('done');confetti();
-}
-function doPaid(){oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();show('wa');openWA()}
-$('paidManual').onclick=doPaid;
+  $('oid').textContent='Order ID: '+oid;show('done');confetti()}
+$('paidManual').onclick=()=>{oid='NFS'+Math.random().toString(36).slice(2,7).toUpperCase();show('wa');openWA()};
 $('reopen').onclick=openWA;
 $('sent').onclick=finish;
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&waOpened&&cur==='wa')finish()});
-function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  if(waOpened&&cur==='wa')finish();
+  else if(payOpened&&cur==='cart'){payOpened=false;$('paidManual').classList.add('pulse');toast("Done paying? Tap “I've paid” below");$('paidManual').scrollIntoView({behavior:'smooth',block:'center'})}});
+function confetti(){const c=['#0c831f','#f8cb46','#ff6b6b','#4dabf7','#b197fc'];
   for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
   document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
+renderGrid();
 if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',()=>{try{navigator.serviceWorker.register('service-worker.js').catch(()=>{})}catch(e){}})}
 </script>
 </body>
