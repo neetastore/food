@@ -111,6 +111,8 @@ summary{cursor:pointer;font-weight:800;color:var(--g)}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 .oid{margin-top:12px;font-weight:900;color:var(--g)!important}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
+.notify{margin:12px 14px 0;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 14px;border-radius:14px;background:var(--gl);border:1px solid var(--g);font-weight:800;font-size:14px}
+.notify button{border:0;background:var(--g);color:#fff;border-radius:10px;padding:8px 16px;font:900 13px 'Nunito',sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
@@ -130,6 +132,7 @@ summary{cursor:pointer;font-weight:800;color:var(--g)}
     <div class="row1"><div><small>Delivering to your flat in</small><b>Neeta's Food Store</b></div><span class="eta">⚡ 30 min</span></div>
     <input class="search" id="q" placeholder='Search "modak", "pizza"…' autocomplete="off">
   </div>
+  <div class="notify" id="notify"><span>🔔 Get offers &amp; order updates</span><button id="notifyBtn">Turn on</button></div>
   <div class="chips" id="chips"></div>
   <div class="banner"><div>Fresh &amp; homemade<br><small>Free delivery on every order</small></div><span>🍡</span></div>
   <div class="grid" id="grid"></div>
@@ -264,6 +267,32 @@ function confetti(){const c=['#0c831f','#f8cb46','#ff6b6b','#4dabf7','#b197fc'];
   document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
 renderGrid();
 if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',()=>{try{navigator.serviceWorker.register('service-worker.js').catch(()=>{})}catch(e){}})}
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getMessaging,getToken,onMessage} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+const app=initializeApp({apiKey:"AIzaSyA8qVjWmPSaw-BXLAtbWtsfCmQOY3ovISo",authDomain:"neetas-food.firebaseapp.com",projectId:"neetas-food",storageBucket:"neetas-food.firebasestorage.app",messagingSenderId:"30666992059",appId:"1:30666992059:web:e7d7b00219940dd7bbbc9e"});
+const VAPID="BFWRIMULOqemLi3e13Vuru6XCLLDb8sAGIUEcE1cR3ypuj-uT_ut-cbn4CohRRe4mbIW1Y6UzjcH7AOkCI4jT28";
+const nb=document.getElementById('notify');
+async function enable(){
+  try{
+    const p=Notification.permission==='granted'?'granted':await Notification.requestPermission();
+    if(p!=='granted')return;
+    const reg=await navigator.serviceWorker.register('service-worker.js');
+    await navigator.serviceWorker.ready;
+    const m=getMessaging(app);
+    const t=await getToken(m,{vapidKey:VAPID,serviceWorkerRegistration:reg});
+    nb.remove();
+    if(t&&location.search.includes('token'))prompt('Copy this token:',t);
+    else toast('🔔 Notifications are on');
+    onMessage(m,x=>{const n=x.notification||{};toast('🔔 '+(n.title||'')+(n.body?' – '+n.body:''))});
+  }catch(e){console.error(e)}
+}
+if(!('Notification' in window)||!('serviceWorker' in navigator)||Notification.permission==='denied')nb.remove();
+else{
+  document.getElementById('notifyBtn').onclick=enable;
+  if(Notification.permission==='granted')enable();
+}
 </script>
 </body>
 </html>
