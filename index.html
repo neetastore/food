@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#5c1236">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Neeta's Food Store</title>
-  <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2a0a2e">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Nunito:wght@500;700;800&display=swap">
 <style>
 :root{--bg1:#2a0a2e;--bg2:#5c1236;--gold:#ffc84a;--saffron:#ff8a1f;--rose:#ff4f7b;--ink:#fff4e0;--card:rgba(255,255,255,.08);--line:rgba(255,200,74,.35);
@@ -101,6 +103,25 @@ input::placeholder{color:#c9a7b0}
 .card .price{font-size:17px;margin:2px 0 0}
 .card small{display:block;font-size:12px;color:#ffd9a0;font-weight:700}
 .sheet .em{font-size:80px}
+
+.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:4;display:none;justify-content:space-around;padding:8px;border-radius:26px;background:rgba(40,8,44,.82);border:1px solid var(--line);backdrop-filter:blur(16px);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+body.tabs-on .tabs{display:flex;animation:up .5s cubic-bezier(.2,.9,.3,1.2)}
+body.tabs-on .scr{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+.tab{position:relative;flex:1;border:0;background:none;color:#d9b8c2;font:800 12px 'Nunito',sans-serif;padding:6px 0;cursor:pointer;transition:.3s;border-radius:18px}
+.tab i{display:block;font-style:normal;font-size:22px;transition:transform .3s}
+.tab.act{color:var(--gold);background:rgba(255,200,74,.14);text-shadow:0 0 12px var(--saffron)}
+.tab.act i{transform:translateY(-3px) scale(1.2)}
+.tab .badge{top:0;right:22%}
+.cbar{position:fixed;left:18px;right:18px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:4;display:none;justify-content:space-between;align-items:center;padding:14px 20px;border:0;border-radius:20px;background:linear-gradient(90deg,var(--gold),var(--saffron));color:#3b0d1d;font:800 16px 'Nunito',sans-serif;box-shadow:0 10px 30px rgba(255,138,31,.5);cursor:pointer}
+.cbar.on{display:flex;animation:up .45s cubic-bezier(.2,.9,.3,1.2)}
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;z-index:40;transform:translate(-50%,-140%);background:#fff4e0;color:#3b0d1d;font-weight:800;padding:12px 22px;border-radius:99px;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:transform .45s cubic-bezier(.2,.9,.3,1.3);white-space:nowrap}
+.toast.on{transform:translate(-50%,0)}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 14px;font-size:13px;font-weight:800;color:#ffd9a0}
+#splash{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(120% 90% at 20% 0%,#5c1236,#2a0a2e 70%);animation:sOut .6s 1.3s forwards}
+#splash svg{width:120px;height:120px;animation:float 1.6s ease-in-out infinite,sPop .8s cubic-bezier(.2,.9,.3,1.4)}
+#splash b{font:400 26px 'Rozha One',serif;color:#fff;text-shadow:0 0 18px var(--saffron)}
+@keyframes sOut{to{opacity:0;visibility:hidden}}
+@keyframes sPop{from{transform:scale(.2);opacity:0}}
 </style>
 </head>
 <body>
@@ -123,7 +144,7 @@ input::placeholder{color:#c9a7b0}
 
 <!-- Shop -->
 <section class="scr" id="shop">
-  <div class="top"><h2>Our menu</h2><button class="cartb" id="cartBtn">Cart <span class="badge" id="badge">0</span></button></div>
+  <div class="top"><h2>Our menu</h2><span class="pill">Fresh &amp; homemade</span></div>
   <p class="hint" style="margin-bottom:14px">Tap a food to choose quantity</p>
   <div class="grid" id="grid"></div>
 </section>
@@ -178,6 +199,14 @@ input::placeholder{color:#c9a7b0}
   </div>
 </div>
 
+<div id="splash"><svg viewBox="0 0 120 120"><use href="#modak"/></svg><b>Neeta's Food Store</b></div>
+<div class="toast" id="toast"></div>
+<button class="cbar" id="cbar"><span id="cbarT"></span><span>View cart ›</span></button>
+<nav class="tabs">
+  <button class="tab act" data-t="shop" id="tabMenu"><i>🍽️</i>Menu</button>
+  <button class="tab" data-t="cart" id="cartBtn"><i>🛒</i>Cart <span class="badge" id="badge">0</span></button>
+  <button class="tab" data-t="help" id="tabHelp"><i>💬</i>Help</button>
+</nav>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const NAME="Neeta's Food Store",UPI="sarthakk760@okhdfcbank",WA="918291697606";
@@ -202,7 +231,11 @@ document.addEventListener('error',e=>{const el=e.target;if(el.tagName!=='IMG'||!
   const i=ITEMS.find(x=>x.id===el.dataset.id);
   if(i.id==='modak'){const n='http://www.w3.org/2000/svg',v=document.createElementNS(n,'svg'),u=document.createElementNS(n,'use');v.setAttribute('viewBox','0 0 120 120');u.setAttribute('href','#modak');v.appendChild(u);el.replaceWith(v)}
   else{const sp=document.createElement('span');sp.className='em';sp.textContent=i.e;el.replaceWith(sp)}},true);
-function show(id){document.querySelectorAll('.scr').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0}
+function show(id){document.querySelectorAll('.scr').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');cur=id;$(id).scrollTop=0;
+  document.body.classList.toggle('tabs-on',id==='shop'||id==='cart');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('act',t.dataset.t===id));updBar()}
+function updBar(){const n=count();$('cbar').classList.toggle('on',n>0&&cur==='shop');$('cbarT').textContent=`🛒 ${n} item${n>1?'s':''} · ₹${total()}`}
+let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
 // floating embers
 const fx=$('fx');
 for(let i=0;i<26;i++){const p=document.createElement('i');p.className='p';const z=4+Math.random()*10;
@@ -216,10 +249,14 @@ function upd(){$('q').textContent=q;$('qt').textContent='Total ₹'+q*sel.p}
 $('plus').onclick=()=>{q=Math.min(q+1,100);upd()};
 $('minus').onclick=()=>{q=Math.max(q-1,1);upd()};
 $('cancel').onclick=()=>$('qm').classList.remove('on');
-$('add').onclick=()=>{cart[sel.id]=Math.min((cart[sel.id]||0)+q,100);$('qm').classList.remove('on');badge();show('cart');render()};
-function badge(){const b=$('badge');b.textContent=count();b.classList.remove('show');if(count()){void b.offsetWidth;b.classList.add('show')}}
+$('add').onclick=()=>{cart[sel.id]=Math.min((cart[sel.id]||0)+q,100);$('qm').classList.remove('on');badge();try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}toast(`✓ ${sel.n} × ${q} added`)};
+function badge(){const b=$('badge');b.textContent=count();b.classList.remove('show');if(count()){void b.offsetWidth;b.classList.add('show')}updBar()}
 $('cartBtn').onclick=()=>{show('cart');render()};
 $('back').onclick=()=>show('shop');
+$('tabMenu').onclick=()=>show('shop');
+$('cbar').onclick=()=>{show('cart');render()};
+$('tabHelp').onclick=()=>{location.href=`https://wa.me/${WA}?text=${encodeURIComponent('Hi, I need help with my order')}`};
+setTimeout(()=>$('splash').remove(),2100);
 // cart
 function render(){
   const L=$('lines'),ids=ITEMS.filter(i=>cart[i.id]);
@@ -257,15 +294,7 @@ function confetti(){const c=['#ffc84a','#ff8a1f','#ff4f7b','#fff4e0','#b86bff'];
   for(let i=0;i<70;i++){const e=document.createElement('i');e.className='conf';
   e.style.cssText=`left:${Math.random()*100}%;background:${c[i%5]};animation-duration:${2.5+Math.random()*2.5}s;animation-delay:${Math.random()*1.2}s;border-radius:${Math.random()>.5?'50%':'2px'}`;
   document.body.appendChild(e);setTimeout(()=>e.remove(),7000)}}
-</script>
-  <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(() => console.log('Service Worker registered'))
-      .catch(err => console.error('Service Worker registration failed:', err));
-  });
-}
+if('serviceWorker' in navigator&&location.protocol==='https:'){addEventListener('load',()=>{try{navigator.serviceWorker.register('service-worker.js').catch(()=>{})}catch(e){}})}
 </script>
 </body>
 </html>
