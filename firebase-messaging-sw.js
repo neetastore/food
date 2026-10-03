@@ -2,7 +2,7 @@ importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js')
 importScripts('https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "AIzaSyABqVjwmPSaw-BXLAtbWtsfCmQ0Y3ovISo",
+  apiKey: "AIzaSyA8qVjWmPSaw-BXLAtbWtsfCmQOY3ovISo",
   authDomain: "neetas-food.firebaseapp.com",
   projectId: "neetas-food",
   storageBucket: "neetas-food.firebasestorage.app",
